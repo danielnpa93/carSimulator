@@ -1,0 +1,58 @@
+version: "2"
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.1
+    hostname: zookeeper
+    container_name: zookeeper
+    networks:
+      - kafka_default
+    restart: always
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  broker:
+    image: confluentinc/cp-server:7.3.1
+    hostname: broker
+    container_name: broker
+    networks:
+      - kafka_default
+    restart: always
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL_CONTAINER:PLAINTEXT,HOST:PLAINTEXT, EXTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL_CONTAINER://broker:29092,HOST://localhost:9092, EXTERNAL://192.168.10.8:9101
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL_CONTAINER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:7.3.1
+    hostname: control-center
+    container_name: control-center
+    restart: always
+    networks:
+      - kafka_default
+    depends_on:
+      - broker
+    ports:
+      - "9021:9021"
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: "broker:29092"
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      PORT: 9021
+
+networks:
+  kafka_default:
+    name: kafka_default
+    driver: bridge

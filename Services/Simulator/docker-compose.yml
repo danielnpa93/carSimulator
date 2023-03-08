@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  simulator-app:
+    build: .
+    container_name: 'route-simulator'
+    networks:
+      - kafka_default
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=broker:29092
+
+networks:
+  kafka_default:
+    name: kafka_default

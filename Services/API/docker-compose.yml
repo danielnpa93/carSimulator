@@ -1,0 +1,55 @@
+version: "3"
+
+services:
+  app:
+    container_name: driver_service_api
+    image: driver_service_api:latest
+    restart: always
+    networks:
+      - driver_project
+    build: .
+    ports:
+      - 5000:80
+    environment:
+      - MONGODB_CONNECTION_STRING=mongodb://root:password@mongodb:27017
+      - MONGODB_DATABASE=driver_service_database
+      - KAFKA_BOOTSTRAP_SERVERS=
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:6.0.4
+    container_name: mongodb
+    restart: always
+    networks:
+      - driver_project
+    ports:
+      - 8000:27017
+    volumes:
+      - ./.docker/dbdata:/data/db
+      - ./.docker/mongo:/docker-entrypoint-initdb.d
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=driver_service_database
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongoExpress
+    networks:
+      - driver_project
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+      - ME_CONFIG_MONGODB_PORT=27017
+    depends_on:
+      - mongodb
+
+networks:
+  driver_project:
+    driver: bridge

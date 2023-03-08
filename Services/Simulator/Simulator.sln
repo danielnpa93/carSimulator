@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simulator.Console", "src\Simulator.Console\Simulator.Console.csproj", "{13F6ADB0-564C-4B35-825F-DD5E4F66E8CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simulator.Schema", "src\Simulator.Schema\Simulator.Schema.csproj", "{D30E9B52-3D3C-4228-9676-3D30479F187A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{13F6ADB0-564C-4B35-825F-DD5E4F66E8CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13F6ADB0-564C-4B35-825F-DD5E4F66E8CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13F6ADB0-564C-4B35-825F-DD5E4F66E8CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13F6ADB0-564C-4B35-825F-DD5E4F66E8CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D30E9B52-3D3C-4228-9676-3D30479F187A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D30E9B52-3D3C-4228-9676-3D30479F187A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D30E9B52-3D3C-4228-9676-3D30479F187A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D30E9B52-3D3C-4228-9676-3D30479F187A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F8177070-F14D-4F5A-A1D0-97A1A12C193A}
+	EndGlobalSection
+EndGlobal
