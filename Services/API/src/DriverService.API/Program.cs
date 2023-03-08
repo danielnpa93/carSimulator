@@ -31,6 +31,13 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
+builder.Services.AddCors(options => {
+    options.AddPolicy("Development",
+    builder => 
+        builder.AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowAnyOrigin());
+});
 
 builder.Services.AddHostedService<TracingRouteConsumerService>();
 
@@ -45,11 +52,14 @@ else
     app.UseHsts();
 }
 
+app.UseCors("Development");
+
 app.UseHttpsRedirection();
 
 app.UseSwaggerConfig();
 
 app.UseRouting();
+
 
 app.UseEndpoints(options =>
 {

@@ -32,16 +32,16 @@ namespace Simulator.Console.Extensions
              .AddPolicyHandler(GetRetryPolicy())
              .AddPolicyHandler(GetCircuitBreakerPolicy());
         }
-        
+
         private static Settings GetSettings(IConfiguration config)
         {
             return new Settings
             {
                 KAFKA_BOOTSTRAP_SERVERS = Environment.GetEnvironmentVariable("KAFKA_BOOTSTRAP_SERVERS") ?? config.GetSection("Kafka")["KAFKA_BOOTSTRAP_SERVERS"],
                 KAFKA_CONSUMER_GROUP_ID = Environment.GetEnvironmentVariable("KAFKA_CONSUMER_GROUP_ID") ?? config.GetSection("Kafka")["KAFKA_CONSUMER_GROUP_ID"],
-                KAFKA_START_ROUTES_CONSUMER_TOPIC = config.GetSection("Kafka")["KAFKA_START_ROUTES_CONSUMER_TOPIC"] ?? Environment.GetEnvironmentVariable("KAFKA_START_ROUTES_CONSUMER_TOPIC"),
-                GOOGLE_DIRECTIONS_API_KEY = config["GOOGLE_DIRECTIONS_API_KEY"] ?? Environment.GetEnvironmentVariable("GOOGLE_DIRECTIONS_API_KEY"),
-                KAFKA_START_ROUTES_PRODUCER_TOPIC = config.GetSection("Kafka")["KAFKA_START_ROUTES_PRODUCER_TOPIC"] ?? Environment.GetEnvironmentVariable("KAFKA_START_ROUTES_PRODUCER_TOPIC"),
+                KAFKA_START_ROUTES_CONSUMER_TOPIC = Environment.GetEnvironmentVariable("KAFKA_START_ROUTES_CONSUMER_TOPIC") ?? config.GetSection("Kafka")["KAFKA_START_ROUTES_CONSUMER_TOPIC"],
+                GOOGLE_DIRECTIONS_API_KEY = Environment.GetEnvironmentVariable("GOOGLE_DIRECTIONS_API_KEY") ?? config["GOOGLE_DIRECTIONS_API_KEY"],
+                KAFKA_START_ROUTES_PRODUCER_TOPIC = Environment.GetEnvironmentVariable("KAFKA_START_ROUTES_PRODUCER_TOPIC") ?? config.GetSection("Kafka")["KAFKA_START_ROUTES_PRODUCER_TOPIC"]
             };
 
         }
