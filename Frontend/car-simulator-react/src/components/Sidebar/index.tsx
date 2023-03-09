@@ -1,25 +1,19 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { Box, Button, FormControl, MenuItem, Select } from "@mui/material";
 import React from "react";
 import { Route } from "types/models";
 
 interface IProps {
   options: Route[];
   onSubmitRace(id: string): void;
+  onRemove(id: string): void;
 }
 
-export default function SideBar({ options, onSubmitRace }: IProps) {
+export default function SideBar({ options, onSubmitRace, onRemove }: IProps) {
   React.useEffect(() => {});
-  const [race, setRace] = React.useState<string>("");
+  const [raceId, setRaceId] = React.useState<string>("");
 
   const handleSubmit = () => {
-    onSubmitRace(race);
+    onSubmitRace(raceId);
   };
 
   return (
@@ -35,9 +29,9 @@ export default function SideBar({ options, onSubmitRace }: IProps) {
         {/* <InputLabel id="demo-simple-select-label">Select a race</InputLabel> */}
         <Select
           displayEmpty
-          value={race}
+          value={raceId}
           variant="standard"
-          onChange={(e) => setRace(e.target.value)}
+          onChange={(e) => setRaceId(e.target.value)}
         >
           <MenuItem style={{ display: "none" }} key={0} value={""}>
             <em>Select a race</em>
@@ -50,11 +44,18 @@ export default function SideBar({ options, onSubmitRace }: IProps) {
         </Select>
         <Button
           style={{ marginTop: "30px" }}
-          disabled={!race}
+          disabled={!raceId}
           onClick={handleSubmit}
           variant="contained"
         >
           Start
+        </Button>
+        <Button
+          variant="contained"
+          disabled={!raceId}
+          onClick={() => onRemove(raceId)}
+        >
+          Remover
         </Button>
       </FormControl>
     </Box>

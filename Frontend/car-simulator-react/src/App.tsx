@@ -1,15 +1,17 @@
 import { Grid, ThemeProvider, CssBaseline } from "@mui/material";
 import Sidebar from "components/Sidebar";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Route } from "types/models";
 import { theme } from "theme";
 import Map from "components/Map";
+import { useSnackbar } from "notistack";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 export default function App() {
   var [runnigRaces, setRunnigRaces] = React.useState<string[]>([]);
   var [racesOptions, setRacesOptions] = React.useState<Route[]>([]);
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     fetch(`${API_URL}`)
@@ -17,12 +19,22 @@ export default function App() {
       .then(({ data }) => setRacesOptions(data));
   }, []);
 
-  const handleSubmitRace = (id: string) => {
-    var newRaces = [...runnigRaces, id];
-    setRunnigRaces((prev) => [...prev, id]);
+  const handleSubmitRace = useCallback(
+    (id: string) => {
+      if (!id) {
+        return;
+      }
 
-    console.log(newRaces);
-  };
+      if (runnigRaces.includes(id)) {
+        enqueueSnackbar("Route was already started", {
+          variant: "error",
+        });
+        return;
+      }
+      setRunnigRaces((prev) => [...prev, id]);
+    },
+    [runnigRaces, enqueueSnackbar]
+  );
 
   return (
     <ThemeProvider theme={theme}>
@@ -34,10 +46,16 @@ export default function App() {
         container
       >
         <Grid item xs={12} sm={3}>
-          <Sidebar options={racesOptions} onSubmitRace={handleSubmitRace} />
+          <Sidebar
+            options={racesOptions}
+            onSubmitRace={handleSubmitRace}
+            onRemove={(id) =>
+              setRunnigRaces((pre) => pre.filter((x) => x !== id))
+            }
+          />
         </Grid>
         <Grid item xs={12} sm={9}>
-          <Map />
+          <Map races={racesOptions.filter((r) => runnigRaces.includes(r.id))} />
         </Grid>
       </Grid>
     </ThemeProvider>
