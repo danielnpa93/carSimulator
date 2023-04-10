@@ -12,6 +12,8 @@ namespace DriverService.API.Configuration
     {
         public static void AddDependencies(this IServiceCollection services)
         {
+            services.AddSignalR();
+
             services.AddScoped<IRouteServices, RouteSevices>();
             services.AddScoped<IRouteRepository, RouteRepository>();
 

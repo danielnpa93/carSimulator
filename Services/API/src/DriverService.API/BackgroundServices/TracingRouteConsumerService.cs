@@ -1,19 +1,22 @@
-﻿using DriverService.API.Domain.Repository;
-using DriverService.API.Domain.Utils;
+﻿using DriverService.API.Controllers;
+using DriverService.API.Domain.Repository;
+using Microsoft.AspNetCore.SignalR;
 using Serilog;
+using System.Text.Json;
 
 namespace DriverService.API.BackgroundServices
 {
     public class TracingRouteConsumerService : BackgroundService
     {
 
-        private readonly string _topic;
         private readonly ITracingRouteMessageBrokerRepository _tracingRouteMessageBrokerRepository;
+        private readonly IHubContext<RoutesHub> _hubContext;
 
-        public TracingRouteConsumerService(ISettings settings, ITracingRouteMessageBrokerRepository tracingRouteMessageBrokerRepository)
+        public TracingRouteConsumerService( ITracingRouteMessageBrokerRepository tracingRouteMessageBrokerRepository,
+            IHubContext<RoutesHub> hubContext)
         {
-            _topic = settings.KAFKA_START_ROUTES_CONSUMER_TOPIC;
             _tracingRouteMessageBrokerRepository = tracingRouteMessageBrokerRepository;
+            _hubContext = hubContext;
         }
 
 
@@ -42,9 +45,14 @@ namespace DriverService.API.BackgroundServices
             //}
         }
 
-        private void DoSome(string obj)
+        private async void DoSome(string obj)
         {
-            Log.Information($"Processando o registo {obj}");
+
+            Log.Information(obj);
+
+            var routes = JsonSerializer.Deserialize<Simulator.Schema.TracingRouteModel>(obj);
+            await _hubContext.Clients.All.SendAsync("UpdateRoute",routes);
+
         }
    
     }

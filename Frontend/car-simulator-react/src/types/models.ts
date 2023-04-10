@@ -3,6 +3,7 @@ export interface Route {
   id: string;
   startPosition: Position;
   endPosition: Position;
+  currentPosition: Position;
 }
 
 type Position = {

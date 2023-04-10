@@ -1,6 +1,15 @@
 version: "3"
 
 services:
+  react-app:
+    image: react-driver:latest
+    build:
+      context: ./Frontend/car-simulator-react
+      dockerfile: Dockerfile.prd
+    container_name: front-app
+    ports:
+      - "3000:80"
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.1
     hostname: zookeeper
@@ -9,8 +18,8 @@ services:
       - driver_app_network
     restart: always
     volumes:
-      - ./.docker/zookeeper:/var/lib/zookeeper/data
-      - ./.docker/zookeeper/log:/var/lib/zookeeper/log
+      - ./Services/.docker/zookeeper:/var/lib/zookeeper/data
+      - ./Services/.docker/zookeeper/log:/var/lib/zookeeper/log
     ports:
       - "2181:2181"
     environment:
@@ -30,7 +39,7 @@ services:
       - "9092:9092"
       - "9101:9101"
     volumes:
-      - ./.docker/kafka:/var/lib/kafka/data
+      - ./Services/.docker/kafka:/var/lib/kafka/data
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
@@ -59,74 +68,6 @@ services:
       PORT: 9021
       CONTROL_CENTER_CONNECT_CLUSTER: http://kafka-connect:8083
 
-  # kafka-connect:
-  #   image: confluentinc/cp-kafka-connect-base:7.3.1
-  #   container_name: kafka-connect
-  #   networks:
-  #     - driver_app_network
-  #   depends_on:
-  #     - zookeeper
-  #     - broker
-  #   ports:
-  #     - 8083:8083
-  #   environment:
-  #     CONNECT_BOOTSTRAP_SERVERS: "broker:29092"
-  #     CONNECT_REST_PORT: 8083
-  #     CONNECT_GROUP_ID: kafka-connect
-  #     CONNECT_CONFIG_STORAGE_TOPIC: _connect-configs
-  #     CONNECT_OFFSET_STORAGE_TOPIC: _connect-offtet
-  #     CONNECT_STATUS_STORAGE_TOPIC: _connect-status
-  #     CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.storage.StringConverter"
-  #     CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-  #     CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-  #     CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-  #     CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
-  #   volumes:
-  #     - .docker/kafka-connect:/data
-  #   command:
-  #     - bash
-  #     - -c
-  #     - |
-  #       echo "Installing Connnector"
-  #       confluent-hub install confluentinc/kafka-connect-elasticsearch:14.0.5
-  #       #
-  #       echo "Lauching Kakfa Connect worker"
-  #       /etc/confluent/docker/run &
-  #       #
-  #       sleep infinity
-
-  elasticsearch:
-    container_name: es-container
-    networks:
-      - driver_app_network
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
-    environment:
-      - node.name=es01
-      - cluster.name=es-docker-cluster
-      - cluster.initial_master_nodes=es01
-      - xpack.security.enabled=false
-      - "discovery.type=single-node"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - .docker/elastic-search:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-
-  kibana:
-    container_name: kb-container
-    image: docker.elastic.co/kibana/kibana:7.11.2
-    environment:
-      - ELASTICSEARCH_HOSTS=http://es-container:9200
-    networks:
-      - driver_app_network
-    depends_on:
-      - elasticsearch
-    ports:
-      - 5601:5601
-
   init-topics:
     image: confluentinc/cp-server:7.3.1
     networks:
@@ -142,9 +83,9 @@ services:
       - broker
 
   simulator-app:
-    build: Simulator/.
+    build: Services/Simulator/.
     container_name: route-simulator
-    image: simulator-app
+    image: simulator-app:latest
     restart: always
     networks:
       - driver_app_network
@@ -157,9 +98,9 @@ services:
       - broker
 
   driver-api:
-    build: API/.
+    build: Services/API/.
     container_name: driver-api
-    image: driver-api
+    image: driver-api:latest
     networks:
       - driver_app_network
     ports:
@@ -190,8 +131,8 @@ services:
     ports:
       - 8000:27017
     volumes:
-      - ./.docker/dbdata:/data/db
-      - ./.docker/mongo:/docker-entrypoint-initdb.d
+      - ./Services/.docker/dbdata:/data/db
+      - ./Services/.docker/mongo:/docker-entrypoint-initdb.d
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=password

@@ -1,6 +1,7 @@
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Sinks.Elasticsearch;
 
 namespace DriverService.API.Configuration
 {
@@ -14,6 +15,12 @@ namespace DriverService.API.Configuration
 
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
+                {
+                    AutoRegisterTemplate = true,
+                    IndexFormat = "DriverService -{0:yyyy.MM.dd}",
+                    MinimumLogEventLevel = _loggingLevel.MinimumLevel,
+                })
                 .MinimumLevel.ControlledBy(_loggingLevel)
                 .CreateLogger();
         }

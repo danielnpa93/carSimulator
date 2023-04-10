@@ -1,5 +1,6 @@
 using DriverService.API.BackgroundServices;
 using DriverService.API.Configuration;
+using DriverService.API.Controllers;
 using DriverService.API.Filters;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,10 +37,20 @@ builder.Services.AddCors(options => {
     builder => 
         builder.AllowAnyHeader()
         .AllowAnyMethod()
-        .AllowAnyOrigin());
+        //.AllowAnyOrigin()
+        .WithOrigins("http://localhost:3000")
+        //.AllowCredentials()
+        //.SetIsOriginAllowed((host) => true)
+        //.AllowAnyHeader()
+       // .AllowAnyMethod()
+       .AllowCredentials()
+        );
 });
 
+
+
 builder.Services.AddHostedService<TracingRouteConsumerService>();
+
 
 var app = builder.Build();
 
@@ -61,9 +72,11 @@ app.UseSwaggerConfig();
 app.UseRouting();
 
 
+
 app.UseEndpoints(options =>
 {
     options.MapControllers();
+    options.MapHub<RoutesHub>("/routeshub");
 });
 
 app.Run();

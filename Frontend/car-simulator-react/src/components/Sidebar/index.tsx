@@ -50,13 +50,13 @@ export default function SideBar({ options, onSubmitRace, onRemove }: IProps) {
         >
           Start
         </Button>
-        <Button
+        {/* <Button
           variant="contained"
           disabled={!raceId}
           onClick={() => onRemove(raceId)}
         >
           Remover
-        </Button>
+        </Button> */}
       </FormControl>
     </Box>
   );

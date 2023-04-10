@@ -6,6 +6,7 @@ using Serilog;
 using Simulator.Schema;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Route = DriverService.API.Domain.Entities.Route;
 
 namespace DriverService.API.Repository.Kafka
@@ -23,6 +24,7 @@ namespace DriverService.API.Repository.Kafka
         public async Task ProduceAsync(Route route)
         {
             var producerRoute = _mapper.Map<InitRouteModel>(route);
+
             var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(producerRoute));
             await this.ProduceAsync(Guid.NewGuid().ToString(), message);
         }

@@ -1,15 +1,19 @@
 export class Route {
   public startMarker: google.maps.Marker;
   public endMarker: google.maps.Marker;
+  public currentMarker: google.maps.Marker;
   public directionRenderer: google.maps.DirectionsRenderer;
 
   constructor(options: {
     startMarkerOptions: google.maps.ReadonlyMarkerOptions;
     endMarkerOptions: google.maps.ReadonlyMarkerOptions;
+    currentMarkerOptions: google.maps.ReadonlyMarkerOptions;
   }) {
-    const { startMarkerOptions, endMarkerOptions } = options;
+    const { startMarkerOptions, endMarkerOptions, currentMarkerOptions } =
+      options;
     this.startMarker = new google.maps.Marker(startMarkerOptions);
     this.endMarker = new google.maps.Marker(endMarkerOptions);
+    this.currentMarker = new google.maps.Marker(currentMarkerOptions);
 
     const strokeColor = (
       this.startMarker.getIcon() as google.maps.ReadonlySymbol
@@ -41,7 +45,7 @@ export class Route {
       },
       (result, status) => {
         if (status === "OK") {
-          console.log(result);
+          //console.log(result);
 
           this.directionRenderer.setDirections(result);
 
@@ -62,17 +66,24 @@ export class Map {
     this.map = new google.maps.Map(element, options);
   }
 
+  moveCurrentMarker(id: string, position: google.maps.LatLngLiteral) {
+    this.routes[id].currentMarker.setPosition(position);
+  }
+
   addRoute(
     id: string,
     routeOptions: {
       startMarkerOptions: google.maps.ReadonlyMarkerOptions;
       endMarkerOptions: google.maps.ReadonlyMarkerOptions;
+      currentMarkerOptions: google.maps.ReadonlyMarkerOptions;
     }
   ) {
-    const { endMarkerOptions, startMarkerOptions } = routeOptions;
+    const { endMarkerOptions, startMarkerOptions, currentMarkerOptions } =
+      routeOptions;
     this.routes[id] = new Route({
       startMarkerOptions: { ...startMarkerOptions, map: this.map },
       endMarkerOptions: { ...endMarkerOptions, map: this.map },
+      currentMarkerOptions: { ...currentMarkerOptions, map: this.map },
     });
 
     this.fitBounds();
@@ -81,6 +92,7 @@ export class Map {
   removeRoute(id: string) {
     this.routes[id].startMarker.setMap(null);
     this.routes[id].endMarker.setMap(null);
+    this.routes[id].currentMarker.setMap(null);
     this.routes[id].directionRenderer.setMap(null);
 
     delete this.routes[id];
@@ -107,5 +119,16 @@ export const makeLocationPinIcon = (color?: string) => {
     strokeWeight: 1,
     fillOpacity: 1,
     anchor: new google.maps.Point(10, 30),
+  };
+};
+
+export const makeLocationCarIcon = (color?: string) => {
+  return {
+    path: "M50 55 A5 5 0 1 0 50 45 A5 5 0 1 0 50 55 Z",
+    fillColor: "none",
+    strokeColor: color || "#000",
+    strokeWeight: 1,
+    fillOpacity: 1,
+    anchor: new google.maps.Point(0, 0),
   };
 };

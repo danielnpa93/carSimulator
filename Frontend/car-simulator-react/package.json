@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@microsoft/signalr": "^7.0.3",
     "@mui/material": "^5.11.12",
     "google-maps": "^4.3.3",
     "notistack": "^3.0.1",

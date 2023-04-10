@@ -36,6 +36,38 @@ export default function App() {
     [runnigRaces, enqueueSnackbar]
   );
 
+  const handleFinishRace = useCallback(
+    (id: string) => {
+      setRunnigRaces((pre) => pre.filter((r) => r !== id));
+
+      enqueueSnackbar("Finished Route", {
+        variant: "success",
+      });
+    },
+    [enqueueSnackbar]
+  );
+
+  // const handleUpdateRace = useCallback(
+  //   (e: { latitude: number; longitude: number; id: string }) => {
+  //     var races = racesOptions.map((r) => {
+  //       if (r.id !== e.id) {
+  //         return r;
+  //       }
+
+  //       return {
+  //         ...r,
+  //         currentPosition: {
+  //           latitude: e.latitude,
+  //           longitude: e.longitude,
+  //         },
+  //       };
+  //     });
+
+  //     setRacesOptions((prev) => races);
+  //   },
+  //   [runnigRaces]
+  // );
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -55,7 +87,11 @@ export default function App() {
           />
         </Grid>
         <Grid item xs={12} sm={9}>
-          <Map races={racesOptions.filter((r) => runnigRaces.includes(r.id))} />
+          <Map
+            onFinishRace={handleFinishRace}
+            // updateRaces={handleUpdateRace}
+            races={racesOptions.filter((r) => runnigRaces.includes(r.id))}
+          />
         </Grid>
       </Grid>
     </ThemeProvider>
