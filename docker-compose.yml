@@ -7,6 +7,13 @@ services:
       context: ./Frontend/car-simulator-react
       dockerfile: Dockerfile.prd
     container_name: front-app
+    networks:
+      - driver_app_network
+    environment:
+      - REACT_APP_API_URL=https://driver-api/api/v1/routes
+      - REACT_APP_API_WEBSOCKET=https://driver-api/routeshub
+    depends_on:
+      - simulator-app
     ports:
       - "3000:80"
 
@@ -83,9 +90,11 @@ services:
       - broker
 
   simulator-app:
-    build: Services/Simulator/.
-    container_name: route-simulator
     image: simulator-app:latest
+    build:
+      context: Services/Simulator/.
+      dockerfile: Dockerfile
+    container_name: route-simulator
     restart: always
     networks:
       - driver_app_network
@@ -98,9 +107,11 @@ services:
       - broker
 
   driver-api:
-    build: Services/API/.
-    container_name: driver-api
     image: driver-api:latest
+    build:
+      context: Services/API/.
+      dockerfile: Dockerfile
+    container_name: driver-api
     networks:
       - driver_app_network
     ports:
@@ -121,6 +132,7 @@ services:
       - KAFKA_START_ROUTES_PRODUCER_TOPIC=init.routes
     depends_on:
       - broker
+      - mongodb
 
   mongodb:
     image: mongo:6.0.4
